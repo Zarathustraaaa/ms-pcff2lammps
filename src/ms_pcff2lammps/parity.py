@@ -38,16 +38,21 @@ def parse_lammps_thermo(log_text: str) -> dict[str, float]:
 def bonded_parity_rows(
     lammps_values: dict[str, float],
     targets: dict[str, float],
-    *,
     tolerance_kcal_mol: float = PARITY_TOLERANCE_KCAL_MOL,
 ) -> list[dict[str, object]]:
     """Return like-for-like bonded component comparisons."""
+    if not math.isfinite(tolerance_kcal_mol) or tolerance_kcal_mol <= 0.0:
+        raise ValueError("parity tolerance must be finite and positive")
     rows: list[dict[str, object]] = []
     for field in ("ebond", "eangle", "edihed", "eimp"):
         if field not in targets:
             raise ValueError(f"bonded reference is missing required field {field!r}")
+        if field not in lammps_values:
+            raise ValueError(f"LAMMPS thermo data is missing required field {field!r}")
         target = float(targets[field])
         value = float(lammps_values[field])
+        if not math.isfinite(target) or not math.isfinite(value):
+            raise ValueError(f"non-finite bonded energy for {field!r}")
         delta = value - target
         rows.append(
             {
@@ -104,40 +109,60 @@ def write_bonded_parity_report(
     return passed
 
 
-def _load_reference_json(path: Path) -> tuple[dict[str, float], str, float]:
+def _validate_reference_payload(
+    payload: dict[str, object], *, source: str
+) -> tuple[dict[str, float], float, str]:
+    required = ("ebond", "eangle", "edihed", "eimp")
+    missing = [field for field in required if field not in payload]
+    if missing:
+        raise ValueError(
+            f"bonded reference {source} is missing fields: {', '.join(missing)}"
+        )
+    try:
+        targets = {field: float(payload[field]) for field in required}
+        tolerance = float(
+            payload.get("tolerance_kcal_mol", PARITY_TOLERANCE_KCAL_MOL)
+        )
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            f"bonded reference {source} contains non-numeric values"
+        ) from exc
+    if not all(math.isfinite(value) for value in targets.values()):
+        raise ValueError("bonded reference energy targets must be finite")
+    if not math.isfinite(tolerance) or tolerance <= 0.0:
+        raise ValueError("bonded reference tolerance must be finite and positive")
+    label = str(payload.get("label", source))
+    return targets, tolerance, label
+
+
+def _load_reference_json(path: Path) -> tuple[dict[str, float], float, str]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError("reference JSON must contain one object")
-    targets = {
-        field: float(payload[field])
-        for field in ("ebond", "eangle", "edihed", "eimp")
-        if field in payload
-    }
-    if len(targets) != 4:
-        missing = sorted(set(("ebond", "eangle", "edihed", "eimp")) - set(targets))
-        raise ValueError(f"reference JSON is missing fields: {', '.join(missing)}")
-    label = str(payload.get("label", path.name))
-    tolerance = float(payload.get("tolerance_kcal_mol", PARITY_TOLERANCE_KCAL_MOL))
-    if tolerance <= 0.0:
-        raise ValueError("reference tolerance must be positive")
-    return targets, label, tolerance
+    return _validate_reference_payload(payload, source=str(path))
 
 
-def resolve_bonded_reference(args: argparse.Namespace) -> Optional[tuple[dict[str, float], str, float]]:
-    profile = getattr(args, "reference_profile", None)
-    json_path = getattr(args, "reference_json", None)
-    if profile and json_path:
+def resolve_bonded_reference(
+    *,
+    profile: Optional[str] = None,
+    json_path: Optional[Path | str] = None,
+) -> Optional[tuple[dict[str, float], float, str]]:
+    """Resolve an explicitly selected bonded parity reference.
+
+    No reference is selected implicitly. Keeping this independent of argparse
+    makes the reference contract usable from both the CLI and Python API.
+    """
+    if profile and json_path is not None:
         raise ValueError("choose either --reference-profile or --reference-json, not both")
     if profile:
         record = BONDED_REFERENCE_PROFILES.get(profile)
         if record is None:
             raise ValueError(f"unknown reference profile: {profile}")
-        return (
-            dict(record["targets"]),
-            str(record["label"]),
-            float(record["tolerance_kcal_mol"]),
-        )
-    if json_path:
+        payload: dict[str, object] = dict(record["targets"])
+        payload["label"] = record["label"]
+        payload["tolerance_kcal_mol"] = record["tolerance_kcal_mol"]
+        return _validate_reference_payload(payload, source=profile)
+    if json_path is not None:
         path = Path(json_path).expanduser().resolve()
         if not path.is_file():
             raise ValueError(f"reference JSON not found: {path}")
