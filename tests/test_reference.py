@@ -46,3 +46,21 @@ def test_reference_json_rejects_missing_fields(tmp_path):
     path.write_text('{"ebond": 1}')
     with pytest.raises(ValueError):
         resolve_bonded_reference(json_path=path)
+
+
+def test_reference_json_rejects_nonfinite_values(tmp_path):
+    path = tmp_path / "reference.json"
+    path.write_text(
+        json.dumps(
+            {
+                "label": "nonfinite",
+                "tolerance_kcal_mol": 0.001,
+                "ebond": 1.0,
+                "eangle": 2.0,
+                "edihed": float("nan"),
+                "eimp": 4.0,
+            }
+        )
+    )
+    with pytest.raises(ValueError, match="must be finite"):
+        resolve_bonded_reference(json_path=path)
