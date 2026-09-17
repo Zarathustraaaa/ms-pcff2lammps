@@ -4,7 +4,13 @@ from .commands import *
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        prog="ms-pcff2lammps",
+        description=(
+            "Audit and convert Materials Studio-assigned PCFF bonded/Class-II "
+            "terms for LAMMPS. Unresolved required terms fail closed."
+        ),
+    )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -21,14 +27,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="assert the native Forcite missing-parameter count for the same structure",
     )
     audit.add_argument(
-        "--allow-forcite-cross-zero",
-        action="store_true",
-        help=(
-            "validation-only: permit unresolved Class-II cross terms as no-ops; "
-            "requires --forcite-missing-parameters 0"
-        ),
-    )
-    audit.add_argument(
         "--native-bendbend",
         help="local native PCFF Bend-Bend CSV required by a validated mapping profile",
     )
@@ -37,7 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
         choices=sorted(BEND_BEND_PROFILES),
         help="validated native Bend-Bend mapping profile",
     )
-    audit.set_defaults(func=cmd_audit)
+    audit.set_defaults(func=cmd_audit, allow_forcite_cross_zero=False)
 
     generate = sub.add_parser(
         "generate",
@@ -62,8 +60,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--allow-forcite-cross-zero",
         action="store_true",
         help=(
-            "validation-only: permit unresolved Class-II cross terms as no-ops; "
-            "requires --forcite-missing-parameters 0"
+            "validation-only PAAm profile: permit the previously validated "
+            "Class-II no-op terms; requires the matching profile/reference, "
+            "Forcite missing-parameter count 0, and a live LAMMPS parity run"
         ),
     )
     generate.add_argument(
@@ -75,12 +74,13 @@ def build_parser() -> argparse.ArgumentParser:
         choices=sorted(BEND_BEND_PROFILES),
         help="validated native Bend-Bend mapping profile",
     )
-    generate.add_argument(
+    reference = generate.add_mutually_exclusive_group()
+    reference.add_argument(
         "--reference-profile",
         choices=sorted(BONDED_REFERENCE_PROFILES),
         help="named fixed-geometry bonded parity reference",
     )
-    generate.add_argument(
+    reference.add_argument(
         "--reference-json",
         help="user-supplied bonded reference JSON with ebond/eangle/edihed/eimp",
     )
