@@ -2,7 +2,53 @@ from __future__ import annotations
 
 from .parity import *
 
+
+def _common_option_error(args: argparse.Namespace) -> Optional[str]:
+    missing_count = getattr(args, "forcite_missing_parameters", None)
+    if missing_count is not None and missing_count < 0:
+        return "--forcite-missing-parameters must be a non-negative integer"
+
+    native_bendbend = getattr(args, "native_bendbend", None)
+    bendbend_profile = getattr(args, "bendbend_profile", None)
+    if native_bendbend and not bendbend_profile:
+        return "--native-bendbend requires an explicit validated --bendbend-profile"
+    if bendbend_profile and not native_bendbend:
+        return "--bendbend-profile requires --native-bendbend"
+    return None
+
+
+def _generation_option_error(args: argparse.Namespace) -> Optional[str]:
+    common = _common_option_error(args)
+    if common:
+        return common
+    if not getattr(args, "allow_forcite_cross_zero", False):
+        return None
+    if args.forcite_missing_parameters != 0:
+        return "--allow-forcite-cross-zero requires --forcite-missing-parameters 0"
+    if args.bendbend_profile != "paam-pentamer-20260917":
+        return (
+            "--allow-forcite-cross-zero is restricted in 0.1.0b1 to "
+            "--bendbend-profile paam-pentamer-20260917"
+        )
+    if getattr(args, "reference_profile", None) != "paam-pentamer-20260917":
+        return (
+            "--allow-forcite-cross-zero requires the matching "
+            "--reference-profile paam-pentamer-20260917"
+        )
+    if _lammps_executable(getattr(args, "lammps", None)) is None:
+        return (
+            "--allow-forcite-cross-zero requires a runnable LAMMPS executable "
+            "for immediate fixed-coordinate parity validation"
+        )
+    return None
+
+
 def cmd_generate(args: argparse.Namespace) -> int:
+    option_error = _generation_option_error(args)
+    if option_error:
+        print(f"ERROR: {option_error}", file=sys.stderr)
+        return 2
+
     car = Path(args.car).expanduser().resolve()
     mdf = Path(args.mdf).expanduser().resolve()
     off = Path(args.off).expanduser().resolve()
@@ -19,7 +65,10 @@ def cmd_generate(args: argparse.Namespace) -> int:
     outdir = Path(args.outdir).expanduser().resolve() if args.outdir else off.parent
     outdir.mkdir(parents=True, exist_ok=True)
     try:
-        reference = resolve_bonded_reference(args)
+        reference = resolve_bonded_reference(
+            profile=getattr(args, "reference_profile", None),
+            json_path=getattr(args, "reference_json", None),
+        )
         system = parse_molecular_system(car, mdf)
         sections = parse_off(off)
         native_records = (
@@ -118,7 +167,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
         print("STATUS: LAMMPS_RUN_COMPLETE_NO_REFERENCE")
         return 0
 
-    targets, reference_label, tolerance = reference
+    targets, tolerance, reference_label = reference
     parity_path = outdir / args.parity_report_name
     try:
         parity_pass = write_bonded_parity_report(
@@ -146,6 +195,11 @@ def cmd_generate(args: argparse.Namespace) -> int:
 
 
 def cmd_audit(args: argparse.Namespace) -> int:
+    option_error = _common_option_error(args)
+    if option_error:
+        print(f"ERROR: {option_error}", file=sys.stderr)
+        return 2
+
     car = Path(args.car).expanduser().resolve()
     mdf = Path(args.mdf).expanduser().resolve()
     off = Path(args.off).expanduser().resolve()
