@@ -35,7 +35,8 @@ For development:
 
 ```bash
 python -m pip install -e '.[dev]'
-pytest
+pytest -q tests
+python scripts/check_repository_hygiene.py
 ```
 
 The runtime code uses only the Python standard library.
@@ -48,7 +49,7 @@ You provide locally:
 - the corresponding `.mdf` file containing the assigned atom types, charges, bond orders, and connectivity;
 - a legally obtained PCFF `.off` parameter file from your own installation.
 
-The repository intentionally does **not** contain a PCFF parameter database or a copy of Materials Studio force-field data. See [docs/PARAMETER_DATA.md](docs/PARAMETER_DATA.md).
+The repository intentionally does **not** contain a PCFF parameter database, native parameter-table exports, or the private PAAm structure files used for the full source-side validation. Public CI is therefore self-contained and uses only redistributable synthetic/software fixtures. See [docs/TESTING.md](docs/TESTING.md) and [docs/PARAMETER_DATA.md](docs/PARAMETER_DATA.md).
 
 ## Audit first
 
@@ -62,20 +63,9 @@ ms-pcff2lammps audit \
   --outdir audit
 ```
 
-The main output is `parameter_audit.csv`. Missing diagonal terms are always fatal. Missing Class-II cross terms are also fatal unless the user explicitly opts into a separately justified validation policy.
+The main output is `parameter_audit.csv`. The public audit command is fail-closed: missing diagonal terms and unresolved Class-II cross terms remain errors. A source-side statement such as `Missing parameters = 0` is useful provenance, but it does not by itself prove that a local lookup miss is a zero term; the miss may also expose an ordering, equivalence, or parser problem.
 
-A legacy/validation-only cross-term no-op policy exists for reproducing a structure that has already been checked in native Forcite:
-
-```bash
-ms-pcff2lammps audit \
-  --car system.car \
-  --mdf system.mdf \
-  --off /path/to/pcff.off \
-  --forcite-missing-parameters 0 \
-  --allow-forcite-cross-zero
-```
-
-Those two flags are intentionally coupled. `--allow-forcite-cross-zero` is rejected unless `--forcite-missing-parameters 0` is supplied. This is not a general rule that “missing means zero”; it is an explicit reproducibility mode for a separately audited Forcite calculation.
+The validation-only no-op policy used to reproduce the PAAm reference case is therefore available only from `generate`, behind the named PAAm profile and matching parity safeguards described below. It is not exposed as a generic audit override.
 
 ## Generate Class-II bonded data
 
@@ -183,6 +173,7 @@ See [docs/LIMITATIONS.md](docs/LIMITATIONS.md) before applying the converter to 
 - [Usage and audit semantics](docs/USAGE.md)
 - [Algorithm and lookup order](docs/ALGORITHM.md)
 - [Validation record](docs/VALIDATION.md)
+- [Testing model: public CI vs private integration validation](docs/TESTING.md)
 - [Nonbonded parity notes](docs/NONBONDED.md)
 - [Parameter data and licensing](docs/PARAMETER_DATA.md)
 - [Provenance](docs/PROVENANCE.md)
