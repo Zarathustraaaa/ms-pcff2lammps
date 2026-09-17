@@ -1,0 +1,8 @@
+{
+  "label": "replace with an independent fixed-geometry Forcite reference",
+  "tolerance_kcal_mol": 0.001,
+  "ebond": 0.0,
+  "eangle": 0.0,
+  "edihed": 0.0,
+  "eimp": 0.0
+}
