@@ -31,3 +31,8 @@ c7075e1d3e387052ee011fab7e271edac0f2956b4c5332619a746ce04936cb38  src/ms_pcff2la
 ```
 
 This checksum will naturally change when the source changes; Git tags and commit hashes are the canonical identifiers after publication.
+
+## Public CI versus source-side validation
+
+GitHub Actions is intentionally limited to redistributable software/synthetic fixtures. The PCFF database, native parameter exports, and private PAAm structure files used for the scientific parity exercise are external validation inputs, not repository dependencies. Their absence from public CI is by design; the numerical validation record is retained as aggregate metadata and is only reproduced locally with appropriately licensed inputs.
+
