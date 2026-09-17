@@ -1,4 +1,4 @@
-name: CI
+name: Public CI
 
 on:
   push:
@@ -7,8 +7,13 @@ on:
 permissions:
   contents: read
 
+# This workflow is intentionally self-contained. It never expects Materials
+# Studio, a PCFF database, native parameter exports, LAMMPS, or private
+# validation structures. Those inputs belong to separate local integration
+# validation and are not distributable repository dependencies.
 jobs:
   test:
+    name: Python ${{ matrix.python-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -19,11 +24,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install
+      - name: Install public test dependencies
         run: python -m pip install -e '.[dev]'
       - name: Compile
-        run: python -m compileall -q src
-      - name: Test
-        run: pytest
+        run: python -m compileall -q src tests
+      - name: Public synthetic/unit tests
+        run: pytest -q tests
       - name: Repository hygiene
         run: python scripts/check_repository_hygiene.py
+      - name: CLI smoke
+        run: |
+          ms-pcff2lammps --version
+          ms-pcff2lammps --help
+
+  build:
+    name: Build source and wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install build
+      - run: python -m build
