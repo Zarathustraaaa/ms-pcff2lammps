@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0b1 — Unreleased
+## 0.1.0b1 — 2026-09-18
 
 Initial public beta.
 
