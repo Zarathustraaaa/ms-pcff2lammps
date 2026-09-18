@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/hero.svg" width="70%" alt="ms-pcff2lammps">
+  <img src="docs/assets/paam-pentamer-validation.png" width="90%" alt="PAAm pentamer PCFF to LAMMPS validation">
 </p>
 
 <h1 align="center">ms-pcff2lammps</h1>
@@ -27,6 +27,10 @@ No hidden parameter guessing. No silent replacement. No bundled commercial force
 ---
 
 ## Pipeline
+
+<p align="center">
+  <img src="docs/assets/paam-pentamer-workflow.png" width="100%" alt="PAAm pentamer fixed-geometry workflow">
+</p>
 
 ```
 
