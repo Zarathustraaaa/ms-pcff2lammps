@@ -45,5 +45,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install build
-      - run: python -m build
+      - name: Install build verification tools
+        run: python -m pip install build twine
+      - name: Build source and wheel
+        run: python -m build
+      - name: Verify package metadata
+        run: python -m twine check dist/*
+      - name: Install built wheel
+        run: python -m pip install --force-reinstall dist/*.whl
+      - name: Wheel CLI smoke
+        run: |
+          ms-pcff2lammps --version
+          ms-pcff2lammps --help
