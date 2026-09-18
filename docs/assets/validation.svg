@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="260" viewBox="0 0 1440 260" role="img" aria-labelledby="title desc">
+  <title id="title">PAAm validation summary</title>
+  <desc id="desc">Aggregate fixed-geometry validation metrics for the named PAAm profile</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1728"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1440" height="260" rx="24" fill="url(#panel)"/>
+  <rect x="32" y="32" width="1376" height="196" rx="18" fill="#0f172a" stroke="#263244"/>
+
+  <text x="72" y="78" fill="#e2e8f0" font-family="Inter, ui-sans-serif, system-ui" font-size="16" font-weight="700" letter-spacing="1.2">PAAm PENTAMER · FIXED-GEOMETRY VALIDATION</text>
+  <rect x="72" y="96" width="1296" height="2" fill="url(#line)" opacity="0.55"/>
+
+  <g font-family="Inter, ui-sans-serif, system-ui">
+    <g transform="translate(72,126)">
+      <text x="0" y="34" fill="#f8fafc" font-size="34" font-weight="760">0</text>
+      <text x="0" y="58" fill="#94a3b8" font-size="13">required missing</text>
+    </g>
+
+    <g transform="translate(320,126)">
+      <text x="0" y="34" fill="#f8fafc" font-size="34" font-weight="760">40</text>
+      <text x="0" y="58" fill="#94a3b8" font-size="13">AngleAngle topologies</text>
+    </g>
+
+    <g transform="translate(610,126)">
+      <text x="0" y="34" fill="#f8fafc" font-size="34" font-weight="760">108 + 12</text>
+      <text x="0" y="58" fill="#94a3b8" font-size="13">native-resolved + validated no-op</text>
+    </g>
+
+    <g transform="translate(950,126)">
+      <text x="0" y="34" fill="#7dd3fc" font-size="34" font-weight="760">7.49×10⁻⁸</text>
+      <text x="0" y="58" fill="#94a3b8" font-size="13">relative total-energy RMSE · kcal/mol</text>
+    </g>
+
+    <g transform="translate(1248,126)">
+      <text x="0" y="34" fill="#c4b5fd" font-size="34" font-weight="760">1.11×10⁻⁷</text>
+      <text x="0" y="58" fill="#94a3b8" font-size="13">max residual · kcal/mol</text>
+    </g>
+  </g>
+</svg>
