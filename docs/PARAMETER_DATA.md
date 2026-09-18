@@ -1,15 +1,17 @@
 # Parameter data and licensing
 
-This repository contains conversion code, tests built from synthetic data, and aggregate validation results. It intentionally does not contain:
+This repository contains conversion code, synthetic software tests, and aggregate validation metadata. It intentionally does not contain Materials Studio or third-party PCFF parameter databases, native parameter-table exports, or the private structures used for the source-side validation.
 
-- `pcff.off`;
-- `pcff.frc` copied from a third-party installation;
-- a full native PCFF Bend-Bend parameter export;
-- Materials Studio project files or assigned structures from the validation run;
-- LAMMPS data/input files containing a redistributed PCFF parameter table.
+Files that must remain local include, in particular:
 
-Users must point the tool at their own local files.
+- PCFF `.off` / `.frc` databases obtained from third-party software;
+- Materials Studio `.car`, `.mdf`, and `.xsd` project or assigned-structure files from private validation work;
+- complete native Bend-Bend or other force-field table exports;
+- LAMMPS inputs or data files that reproduce a third-party parameter database rather than a small independently authored synthetic fixture;
+- source-side reports that disclose restricted project contents or personal filesystem paths.
 
-The CI workflow runs `scripts/check_repository_hygiene.py` to reduce the chance of accidentally committing common Materials Studio or raw parameter assets.
+Users point the tool at their own local files at runtime. Public CI does not require those assets.
 
-If you contribute a test case, prefer a small synthetic parameter file whose values were authored specifically for the test. Do not submit proprietary force-field tables in issues, pull requests or fixtures.
+The repository hygiene check blocks common force-field/project extensions, known native-export filename patterns, and obvious personal absolute paths. This is a guardrail, not a license determination. Contributors remain responsible for verifying redistribution rights before submitting any data.
+
+For public tests, prefer small synthetic fixtures with independently authored values and topology. Do not paste proprietary parameter tables into issues, pull requests, screenshots, or test fixtures.

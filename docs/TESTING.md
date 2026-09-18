@@ -37,7 +37,7 @@ A complete source-to-LAMMPS parity run requires files that deliberately remain o
 - a legally available local PCFF `.off` file;
 - matching Materials Studio `.car`/`.mdf` structures with assigned types, charges, bond orders, and connectivity;
 - a native Bend-Bend export when exercising the named PAAm mapping profile;
-- source-side fixed-geometry energy results;
+- source-side fixed-geometry energy results or a local reference JSON;
 - a compatible LAMMPS executable.
 
 Pass those inputs by local path at runtime. Do not copy them into `tests/`, `examples/`, CI artifacts, issues, or pull requests unless redistribution rights are clear.
@@ -53,7 +53,7 @@ ms-pcff2lammps generate \
   --bendbend-profile paam-pentamer-20260917 \
   --forcite-missing-parameters 0 \
   --allow-forcite-cross-zero \
-  --reference-profile paam-pentamer-20260917 \
+  --reference-json /local/private/paam_bonded_reference.json \
   --lammps /path/to/lmp
 ```
 

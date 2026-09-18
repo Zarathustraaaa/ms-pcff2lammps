@@ -2,19 +2,7 @@ import json
 
 import pytest
 
-from ms_pcff2lammps.converter import (
-    PAAM_PENTAMER_20260917_TARGETS,
-    resolve_bonded_reference,
-)
-
-
-def test_builtin_reference_is_explicit_and_finite():
-    resolved = resolve_bonded_reference(profile="paam-pentamer-20260917")
-    assert resolved is not None
-    targets, tolerance, label = resolved
-    assert targets == PAAM_PENTAMER_20260917_TARGETS
-    assert tolerance == pytest.approx(1.0e-3)
-    assert "PAAm pentamer" in label
+from ms_pcff2lammps.converter import resolve_bonded_reference
 
 
 def test_no_reference_is_selected_implicitly():
@@ -64,3 +52,8 @@ def test_reference_json_rejects_nonfinite_values(tmp_path):
     )
     with pytest.raises(ValueError, match="must be finite"):
         resolve_bonded_reference(json_path=path)
+
+
+def test_reference_json_must_exist(tmp_path):
+    with pytest.raises(ValueError, match="reference JSON not found"):
+        resolve_bonded_reference(json_path=tmp_path / "missing.json")

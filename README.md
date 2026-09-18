@@ -94,7 +94,7 @@ With no reference selected, the tool runs LAMMPS and reports the bonded thermo c
 
 ## Reference-based parity
 
-A reference is never selected implicitly. You may provide a JSON file:
+Reference energies are never embedded or selected implicitly. Provide them from a local JSON file:
 
 ```json
 {
@@ -131,7 +131,7 @@ ms-pcff2lammps generate \
   --bendbend-profile paam-pentamer-20260917 \
   --forcite-missing-parameters 0 \
   --allow-forcite-cross-zero \
-  --reference-profile paam-pentamer-20260917 \
+  --reference-json /local/private/paam_bonded_reference.json \
   --lammps /path/to/lmp
 ```
 

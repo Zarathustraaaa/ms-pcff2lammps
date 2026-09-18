@@ -30,10 +30,10 @@ def _generation_option_error(args: argparse.Namespace) -> Optional[str]:
             "--allow-forcite-cross-zero is restricted in 0.1.0b1 to "
             "--bendbend-profile paam-pentamer-20260917"
         )
-    if getattr(args, "reference_profile", None) != "paam-pentamer-20260917":
+    if not getattr(args, "reference_json", None):
         return (
-            "--allow-forcite-cross-zero requires the matching "
-            "--reference-profile paam-pentamer-20260917"
+            "--allow-forcite-cross-zero requires --reference-json with the "
+            "matching private fixed-geometry reference"
         )
     if _lammps_executable(getattr(args, "lammps", None)) is None:
         return (
@@ -66,7 +66,6 @@ def cmd_generate(args: argparse.Namespace) -> int:
     outdir.mkdir(parents=True, exist_ok=True)
     try:
         reference = resolve_bonded_reference(
-            profile=getattr(args, "reference_profile", None),
             json_path=getattr(args, "reference_json", None),
         )
         system = parse_molecular_system(car, mdf)

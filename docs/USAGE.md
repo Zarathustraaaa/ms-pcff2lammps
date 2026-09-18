@@ -53,6 +53,6 @@ This isolates the bonded/Class-II conversion. It is not a production MD template
 
 ## Reference parity
 
-A parity check is performed only when `--reference-profile` or `--reference-json` is given. With neither option, the LAMMPS run is reported without a PASS/FAIL scientific claim.
+A parity check is performed only when `--reference-json` is given. With neither option, the LAMMPS run is reported without a PASS/FAIL scientific claim.
 
 A reference JSON must provide `ebond`, `eangle`, `edihed`, and `eimp`. The values must correspond to the same grouping as the generated LAMMPS bonded audit. Do not compare an isolated source subcomponent to a LAMMPS thermo field that contains additional terms.

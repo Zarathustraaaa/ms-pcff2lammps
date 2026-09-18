@@ -61,7 +61,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help=(
             "validation-only PAAm profile: permit the previously validated "
-            "Class-II no-op terms; requires the matching profile/reference, "
+            "Class-II no-op terms; requires a private reference JSON, "
             "Forcite missing-parameter count 0, and a live LAMMPS parity run"
         ),
     )
@@ -74,15 +74,9 @@ def build_parser() -> argparse.ArgumentParser:
         choices=sorted(BEND_BEND_PROFILES),
         help="validated native Bend-Bend mapping profile",
     )
-    reference = generate.add_mutually_exclusive_group()
-    reference.add_argument(
-        "--reference-profile",
-        choices=sorted(BONDED_REFERENCE_PROFILES),
-        help="named fixed-geometry bonded parity reference",
-    )
-    reference.add_argument(
+    generate.add_argument(
         "--reference-json",
-        help="user-supplied bonded reference JSON with ebond/eangle/edihed/eimp",
+        help="local bonded reference JSON with ebond/eangle/edihed/eimp",
     )
     generate.add_argument(
         "--lammps",

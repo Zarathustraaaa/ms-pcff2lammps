@@ -144,24 +144,14 @@ def _load_reference_json(path: Path) -> tuple[dict[str, float], float, str]:
 
 def resolve_bonded_reference(
     *,
-    profile: Optional[str] = None,
     json_path: Optional[Path | str] = None,
 ) -> Optional[tuple[dict[str, float], float, str]]:
-    """Resolve an explicitly selected bonded parity reference.
+    """Resolve a user-supplied bonded parity reference.
 
-    No reference is selected implicitly. Keeping this independent of argparse
-    makes the reference contract usable from both the CLI and Python API.
+    Reference energies are deliberately not embedded in the public package.
+    Keeping this independent of argparse makes the contract usable from both
+    the CLI and Python API.
     """
-    if profile and json_path is not None:
-        raise ValueError("choose either --reference-profile or --reference-json, not both")
-    if profile:
-        record = BONDED_REFERENCE_PROFILES.get(profile)
-        if record is None:
-            raise ValueError(f"unknown reference profile: {profile}")
-        payload: dict[str, object] = dict(record["targets"])
-        payload["label"] = record["label"]
-        payload["tolerance_kcal_mol"] = record["tolerance_kcal_mol"]
-        return _validate_reference_payload(payload, source=profile)
     if json_path is not None:
         path = Path(json_path).expanduser().resolve()
         if not path.is_file():

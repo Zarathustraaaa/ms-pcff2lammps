@@ -45,37 +45,8 @@ CLASS2_CROSS_INTERACTIONS = {
     "AngleAngle",
 }
 
-# Forcite's printed component energies are grouped differently from the
-# LAMMPS Class-II thermo fields.  These are the targets supplied with the
-# current PAAm pentamer ground truth and are deliberately kept separate from
-# the parameter audit.
-PAAM_PENTAMER_20260917_TARGETS = {
-    # High-precision values exported by the Materials Studio XSD ground
-    # truth for PAAm_pentamer_PCFF_Forcite_20260917.  Keep these separate
-    # from the rounded values shown in the user's summary so the 1e-3
-    # parity gate tests the actual fixed-geometry reference.
-    "ebond": 6.32508802578315,
-    "eangle": 10.0094004074713 - 0.449538626175228 - 0.752848623396405,
-    "edihed": (
-        -33.9912806672708
-        + 0.0701871205505434
-        + 0.0
-        - 0.653798168562047
-        - 0.0929737100690494
-        - 1.17229746513614
-    ),
-    "eimp": 1.5258521123423e-10 + 0.0323800565364685,
-}
 PARITY_TOLERANCE_KCAL_MOL = 1.0e-3
 __version__ = "0.1.0b1"
-
-BONDED_REFERENCE_PROFILES = {
-    "paam-pentamer-20260917": {
-        "label": "PAAm pentamer / Materials Studio PCFF 3.1 / 2026-09-17",
-        "targets": PAAM_PENTAMER_20260917_TARGETS,
-        "tolerance_kcal_mol": PARITY_TOLERANCE_KCAL_MOL,
-    }
-}
 
 # The native Bend-Bend sequence mapping/no-op allowlist below was established
 # by a cross-geometry fit and independent run-0 parity checks for this profile.

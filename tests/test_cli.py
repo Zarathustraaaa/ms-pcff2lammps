@@ -26,7 +26,7 @@ def test_generate_cross_zero_requires_source_assertion(tmp_path, capsys):
             "--off", str(tmp_path / "pcff.off"),
             "--native-bendbend", str(tmp_path / "bendbend.csv"),
             "--bendbend-profile", "paam-pentamer-20260917",
-            "--reference-profile", "paam-pentamer-20260917",
+            "--reference-json", str(tmp_path / "reference.json"),
             "--allow-forcite-cross-zero",
         ]
     )
@@ -48,7 +48,7 @@ def test_generate_cross_zero_requires_matching_reference(tmp_path, capsys):
         ]
     )
     assert rc == 2
-    assert "requires the matching --reference-profile" in capsys.readouterr().err
+    assert "requires --reference-json" in capsys.readouterr().err
 
 
 def test_audit_does_not_expose_cross_zero_override(capsys):
