@@ -1,0 +1,23 @@
+{
+  "status": "PCFF_LAMMPS_PARITY_FINAL_PASS",
+  "scope": "fixed-coordinate PAAm pentamer parity",
+  "angleangle_topology_count": 40,
+  "native_bendbend_exact": 99,
+  "native_bendbend_symmetry": 9,
+  "native_bendbend_resolved": 108,
+  "validated_noop_components": 12,
+  "validated_noop_unique_keys": 3,
+  "unexpected_missing_bendbend": 0,
+  "required_missing": 0,
+  "base_eimp_delta_kcal_mol": 3.787e-12,
+  "c1_c9_plus_eimp_delta_kcal_mol": 3.786e-12,
+  "absolute_total_energy_max_delta_kcal_mol": 2.928341644e-6,
+  "relative_total_energy_rmse_kcal_mol": 7.4863808e-8,
+  "relative_total_energy_max_abs_kcal_mol": 1.11314449e-7,
+  "nonbonded_validation": {
+    "pair_style": "lj/class2/coul/cut 12.5",
+    "special_bonds": "lj/coul 0.0 0.0 1.0",
+    "forcite_spline_width_angstrom": 0.0
+  },
+  "note": "Aggregate validation metadata only; no PCFF parameter table is redistributed."
+}

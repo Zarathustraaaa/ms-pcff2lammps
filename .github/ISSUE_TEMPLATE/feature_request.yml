@@ -1,0 +1,23 @@
+name: Feature request
+description: Propose a new force-field form, chemistry, parser rule or workflow
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: scope
+    attributes:
+      label: Requested capability
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Validation source
+      description: Describe the independent reference or documentation that would validate the change.
+    validations:
+      required: true
+  - type: textarea
+    id: licensing
+    attributes:
+      label: Redistributable test strategy
+      description: Explain how the feature can be tested without committing proprietary parameter data.

@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+.coverage
+htmlcov/
+
+# Local/proprietary Materials Studio assets must not be committed.
+*.off
+*.frc
+*.car
+*.mdf
+*.xsd
+*pcff_native*bendbend*.csv
+*native_bendbend*.csv
+
+# Generated simulation outputs
+*.log.lammps
+log.lammps
+*.restart
+*.lammpstrj

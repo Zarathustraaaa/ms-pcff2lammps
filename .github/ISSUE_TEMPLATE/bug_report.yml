@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible parser, mapping, writer or parity issue
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach proprietary PCFF/Materials Studio parameter databases. Reduce the case to synthetic or redistributable data where possible.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: 0.1.0b1
+    validations:
+      required: true
+  - type: dropdown
+    id: command
+    attributes:
+      label: Command
+      options: [audit, generate, classify, trace, auto, inventory, other]
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior and independent reference
+      description: State how the expected result was established.
+    validations:
+      required: true
+  - type: textarea
+    id: reproducer
+    attributes:
+      label: Minimal reproducer
+      description: Use synthetic/redistributable inputs only.
