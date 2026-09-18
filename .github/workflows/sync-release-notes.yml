@@ -1,0 +1,20 @@
+name: Sync v0.1.0b1 release notes
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.event.head_commit.message == 'Sync v0.1.0b1 release notes'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update release notes
+        run: gh release edit v0.1.0b1 --repo "$GITHUB_REPOSITORY" --notes-file RELEASE_NOTES.md
