@@ -178,6 +178,7 @@ See [docs/LIMITATIONS.md](docs/LIMITATIONS.md) before applying the converter to 
 - [Parameter data and licensing](docs/PARAMETER_DATA.md)
 - [Provenance](docs/PROVENANCE.md)
 - [Limitations](docs/LIMITATIONS.md)
+- [Release process](docs/RELEASING.md)
 - [Scientific and legal disclaimer](DISCLAIMER.md)
 
 ## License and independence
