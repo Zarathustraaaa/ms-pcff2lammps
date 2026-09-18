@@ -29,6 +29,10 @@ IGNORED_DIRS = {
 TEXT_SUFFIXES = {
     ".md", ".txt", ".py", ".toml", ".yml", ".yaml", ".json", ".cff", ".sh"
 }
+PRIVATE_PATH_SCAN_EXEMPT = {
+    Path("scripts/check_repository_hygiene.py"),
+    Path("tests/test_repository_hygiene.py"),
+}
 PRIVATE_PATH_PATTERNS = (
     re.compile(r"(?i)[A-Z]:[\\/](?:Users|Documents and Settings)[\\/][^\\/\s]+"),
     re.compile(r"/Users/[^/\s]+/"),
@@ -56,7 +60,11 @@ def find_problems(root: Path) -> list[str]:
         ):
             problems.append(f"native parameter export must remain local: {rel}")
 
-        if suffix in TEXT_SUFFIXES and path.stat().st_size <= 2_000_000:
+        if (
+            rel not in PRIVATE_PATH_SCAN_EXEMPT
+            and suffix in TEXT_SUFFIXES
+            and path.stat().st_size <= 2_000_000
+        ):
             try:
                 text = path.read_text(encoding="utf-8")
             except UnicodeDecodeError:
