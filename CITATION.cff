@@ -3,6 +3,7 @@ message: "If you use this software, cite the repository and the exact release or
 title: "ms-pcff2lammps"
 type: software
 version: "0.1.0b1"
+license: BSD-3-Clause
 repository-code: "https://github.com/Zarathustraaaa/ms-pcff2lammps"
 authors:
   - name: "Zarathustraaaa"
