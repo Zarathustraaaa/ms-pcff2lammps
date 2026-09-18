@@ -1,36 +1,74 @@
-<div align="center">
+<p align="center">
+  <img src="docs/assets/hero.svg" alt="ms-pcff2lammps — audited PCFF to LAMMPS Class-II conversion" width="100%">
+</p>
 
-# ms-pcff2lammps
+<p align="center">
+  <a href="https://github.com/Zarathustraaaa/ms-pcff2lammps/releases"><img src="https://img.shields.io/github/v/release/Zarathustraaaa/ms-pcff2lammps?include_prereleases&sort=semver&style=flat-square" alt="Release"></a>
+  <a href="https://github.com/Zarathustraaaa/ms-pcff2lammps/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Zarathustraaaa/ms-pcff2lammps/ci.yml?branch=main&style=flat-square&label=public%20CI" alt="Public CI"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%E2%80%933.13-3776AB?style=flat-square" alt="Python 3.10–3.13">
+  <img src="https://img.shields.io/badge/License-BSD--3--Clause-3A7D44?style=flat-square" alt="BSD-3-Clause">
+  <img src="https://img.shields.io/badge/force--field%20data-not%20bundled-475569?style=flat-square" alt="Force-field data not bundled">
+</p>
 
-**Audited Materials Studio PCFF → LAMMPS Class-II conversion**
+<p align="center">
+  <strong>Strict parameter resolution · Class-II translation · fixed-geometry parity</strong>
+</p>
 
-A conservative command-line tool for converting Materials Studio-assigned PCFF molecular structures into LAMMPS Class-II bonded topology and coefficients, with explicit parameter auditing and fixed-coordinate parity checks.
-
-[![Release](https://img.shields.io/github/v/release/Zarathustraaaa/ms-pcff2lammps?include_prereleases&sort=semver)](https://github.com/Zarathustraaaa/ms-pcff2lammps/releases)
-[![Public CI](https://github.com/Zarathustraaaa/ms-pcff2lammps/actions/workflows/ci.yml/badge.svg)](https://github.com/Zarathustraaaa/ms-pcff2lammps/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/Python-3.10%E2%80%933.13-3776AB)
-![License](https://img.shields.io/badge/License-BSD--3--Clause-3A7D44)
-![Status](https://img.shields.io/badge/status-research%20beta-6A5ACD)
-
-[Quick start](#quick-start) · [How it works](#how-it-works) · [Validation](#validation) · [Limitations](#scope-and-limitations) · [Documentation](#documentation) · [Releases](https://github.com/Zarathustraaaa/ms-pcff2lammps/releases)
-
-</div>
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#conversion-pipeline">Pipeline</a> ·
+  <a href="#validation">Validation</a> ·
+  <a href="#scope-and-limitations">Limitations</a> ·
+  <a href="https://github.com/Zarathustraaaa/ms-pcff2lammps/releases/tag/v0.1.0b1">v0.1.0b1</a>
+</p>
 
 ---
 
 ## At a glance
 
-| | |
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### Audit
+
+Resolve assigned topology against the local PCFF OFF hierarchy and write a machine-readable parameter audit.
+
+**Default:** unresolved required terms stop the conversion.
+
+</td>
+<td width="33%" valign="top">
+
+### Translate
+
+Convert supported PCFF/Class-II bonded forms and cross terms into LAMMPS-compatible ordering.
+
+**No fitting:** source coefficients remain traceable to resolved records.
+
+</td>
+<td width="33%" valign="top">
+
+### Verify
+
+Optionally run a fixed-coordinate LAMMPS `run 0` and compare definitionally equivalent bonded energy groups.
+
+**Reference:** supplied locally by the user.
+
+</td>
+</tr>
+</table>
+
+| Contract | Current beta |
 |---|---|
-| **Input** | Materials Studio `.car` + `.mdf` and a user-supplied PCFF `.off` database |
+| **Input** | Materials Studio `.car` + `.mdf` + user-supplied PCFF `.off` |
 | **Output** | Audited LAMMPS Class-II bonded topology and coefficients |
-| **Default behavior** | Fail closed on unresolved required terms |
-| **Parity support** | Fixed-coordinate bonded `run 0` checks against a user-supplied reference |
+| **Failure policy** | Fail closed on unresolved required terms |
+| **Production nonbonded setup** | Not generated |
 | **Redistributed force-field data** | None |
-| **Current release** | `0.1.0b1` research beta |
+| **Validated profile** | PAAm pentamer fixed-geometry workflow |
 
 > [!IMPORTANT]
-> This project does not redistribute Materials Studio or PCFF parameter databases. Users provide legally obtained local parameter files at runtime.
+> This repository contains conversion code and redistributable validation metadata only. Materials Studio/PCFF parameter databases and private validation structures are not bundled.
 
 ## Why this exists
 
@@ -38,18 +76,29 @@ PCFF is a Class-II force field. A correct transfer requires more than copying di
 
 `ms-pcff2lammps` keeps that process explicit and auditable. It does **not** retype atoms, invent charges, silently fill missing coefficients, or treat a successful file conversion as proof that a new chemistry has been validated.
 
-## How it works
+## Conversion pipeline
 
 ```mermaid
 flowchart LR
-    A["Assigned CAR / MDF"] --> C["Topology + atom types"]
-    B["Local PCFF OFF"] --> D["Parameter lookup"]
-    C --> E["Strict parameter audit"]
-    D --> E
-    E -->|"complete"| F["LAMMPS Class-II data"]
-    E -->|"required term missing"| X["stop"]
-    F --> G["optional fixed-coordinate run 0"]
-    G --> H["parity report"]
+    S1["Assigned CAR / MDF"] --> T["Topology<br/>atom types · charges · connectivity"]
+    S2["Local PCFF OFF"] --> P["OFF parser<br/>equivalence · step-down · X · IGNORE"]
+    T --> A["Strict parameter audit"]
+    P --> A
+    A -->|"complete"| C["Class-II conversion"]
+    A -->|"required term unresolved"| STOP["STOP"]
+    C --> D["LAMMPS data"]
+    D --> R["fixed-coordinate run 0"]
+    REF["local reference JSON"] --> R
+    R --> V["parity report"]
+
+    classDef source fill:#0f172a,stroke:#38bdf8,color:#e2e8f0,stroke-width:1.5px;
+    classDef audit fill:#111827,stroke:#a78bfa,color:#f8fafc,stroke-width:2px;
+    classDef pass fill:#0f172a,stroke:#22d3ee,color:#e2e8f0,stroke-width:1.5px;
+    classDef stop fill:#2a1114,stroke:#fb7185,color:#fecdd3,stroke-width:1.5px;
+    class S1,S2,REF source;
+    class A audit;
+    class T,P,C,D,R,V pass;
+    class STOP stop;
 ```
 
 The lookup and conversion path is deliberately fail-closed:
@@ -65,6 +114,15 @@ The lookup and conversion path is deliberately fail-closed:
 ## Quick start
 
 Python 3.10 or newer is required.
+
+Install the current beta directly from the tagged release:
+
+```bash
+python -m pip install \
+  https://github.com/Zarathustraaaa/ms-pcff2lammps/releases/download/v0.1.0b1/ms_pcff2lammps-0.1.0b1-py3-none-any.whl
+```
+
+Or install from a source checkout:
 
 ```bash
 git clone https://github.com/Zarathustraaaa/ms-pcff2lammps.git
@@ -146,6 +204,10 @@ Only like-for-like bonded groups should be compared. Materials Studio and LAMMPS
 
 The most complete validation in the current beta is a fixed-coordinate PAAm pentamer workflow.
 
+<p align="center">
+  <img src="docs/assets/validation.svg" alt="PAAm pentamer validation summary" width="100%">
+</p>
+
 | Metric | Result |
 |---|---:|
 | Required missing parameters | **0** |
@@ -207,6 +269,14 @@ This project is intentionally conservative.
 
 See [docs/LIMITATIONS.md](docs/LIMITATIONS.md) before applying the converter to a new system.
 
+## Design principles
+
+- **Assigned topology is authoritative.** Connectivity and atom typing come from the Materials Studio files; the converter does not infer a replacement model from geometry.
+- **Parameter provenance stays visible.** Matching level, source record, coefficient values, zero/no-op source, and status are written into the audit path.
+- **Missing is not zero.** A lookup failure is treated as an implementation or coverage problem unless an explicitly validated profile says otherwise.
+- **Parity is definition-aware.** Energy components are compared only when the source and LAMMPS quantities represent the same terms.
+- **Private data stays private.** Public CI is synthetic and self-contained; commercial parameter databases and project structures remain local.
+
 ## Development
 
 ```bash
@@ -243,6 +313,6 @@ This is independent research software. It is not affiliated with, endorsed by, o
 
 <div align="center">
 
-**[Release v0.1.0b1](https://github.com/Zarathustraaaa/ms-pcff2lammps/releases/tag/v0.1.0b1)** · **[Report an issue](https://github.com/Zarathustraaaa/ms-pcff2lammps/issues)**
+**[v0.1.0b1 release](https://github.com/Zarathustraaaa/ms-pcff2lammps/releases/tag/v0.1.0b1)** · **[Documentation](docs/USAGE.md)** · **[Report an issue](https://github.com/Zarathustraaaa/ms-pcff2lammps/issues)**
 
 </div>

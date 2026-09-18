@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="520" viewBox="0 0 1440 520" role="img" aria-labelledby="title desc">
+  <title id="title">ms-pcff2lammps</title>
+  <desc id="desc">Audited PCFF to LAMMPS Class-II conversion and parity workflow</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="0.55" stop-color="#0b1728"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="0.55" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#172033" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#0f172a" stop-opacity="0.95"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#94a3b8" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1440" height="520" rx="28" fill="url(#bg)"/>
+  <rect width="1440" height="520" rx="28" fill="url(#grid)"/>
+
+  <circle cx="1190" cy="92" r="170" fill="#22d3ee" opacity="0.05"/>
+  <circle cx="1290" cy="420" r="230" fill="#8b5cf6" opacity="0.05"/>
+  <circle cx="160" cy="510" r="220" fill="#38bdf8" opacity="0.035"/>
+
+  <g transform="translate(84,92)">
+    <rect x="0" y="0" width="164" height="30" rx="15" fill="#0ea5e9" fill-opacity="0.12" stroke="#38bdf8" stroke-opacity="0.35"/>
+    <text x="82" y="20" text-anchor="middle" fill="#7dd3fc" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700" letter-spacing="1.4">RESEARCH BETA</text>
+
+    <text x="0" y="104" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="64" font-weight="760" letter-spacing="-2.5">ms-pcff2lammps</text>
+    <rect x="0" y="126" width="520" height="4" rx="2" fill="url(#accent)"/>
+    <text x="0" y="176" fill="#cbd5e1" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="26" font-weight="580">Audited PCFF → LAMMPS Class-II conversion</text>
+    <text x="0" y="218" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="18">Explicit parameter resolution. Fail-closed auditing. Fixed-geometry parity checks.</text>
+
+    <g transform="translate(0,274)" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" font-weight="700">
+      <rect x="0" y="0" width="122" height="36" rx="18" fill="#0f2538" stroke="#38bdf8" stroke-opacity="0.35"/>
+      <text x="61" y="23" text-anchor="middle" fill="#7dd3fc">PARSE</text>
+      <rect x="134" y="0" width="122" height="36" rx="18" fill="#0f2538" stroke="#38bdf8" stroke-opacity="0.35"/>
+      <text x="195" y="23" text-anchor="middle" fill="#7dd3fc">RESOLVE</text>
+      <rect x="268" y="0" width="122" height="36" rx="18" fill="#171d38" stroke="#a78bfa" stroke-opacity="0.38"/>
+      <text x="329" y="23" text-anchor="middle" fill="#c4b5fd">AUDIT</text>
+      <rect x="402" y="0" width="122" height="36" rx="18" fill="#171d38" stroke="#a78bfa" stroke-opacity="0.38"/>
+      <text x="463" y="23" text-anchor="middle" fill="#c4b5fd">VERIFY</text>
+    </g>
+  </g>
+
+  <g transform="translate(790,88)">
+    <path d="M92 86 C185 15, 300 10, 392 76 C469 132, 493 229, 444 309" fill="none" stroke="url(#accent)" stroke-width="2.2" stroke-opacity="0.55"/>
+    <path d="M70 290 C171 363, 326 366, 438 304" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-opacity="0.3"/>
+
+    <g fill="none" stroke="#94a3b8" stroke-opacity="0.32" stroke-width="2">
+      <path d="M118 90 L180 55 L238 93 L302 58 L366 99"/>
+      <path d="M180 55 L202 132 L238 93 L272 143 L302 58"/>
+      <path d="M202 132 L151 170 L206 224 L272 143 L330 188"/>
+      <path d="M206 224 L164 282 L250 307 L330 265 L330 188"/>
+      <path d="M330 188 L402 166 L420 238 L330 265"/>
+    </g>
+
+    <g fill="#0b1728" stroke-width="3">
+      <circle cx="118" cy="90" r="13" stroke="#38bdf8"/>
+      <circle cx="180" cy="55" r="10" stroke="#a78bfa"/>
+      <circle cx="238" cy="93" r="15" stroke="#22d3ee"/>
+      <circle cx="302" cy="58" r="11" stroke="#a78bfa"/>
+      <circle cx="366" cy="99" r="13" stroke="#38bdf8"/>
+      <circle cx="202" cy="132" r="10" stroke="#38bdf8"/>
+      <circle cx="272" cy="143" r="12" stroke="#22d3ee"/>
+      <circle cx="151" cy="170" r="9" stroke="#a78bfa"/>
+      <circle cx="206" cy="224" r="14" stroke="#38bdf8"/>
+      <circle cx="330" cy="188" r="15" stroke="#22d3ee"/>
+      <circle cx="402" cy="166" r="10" stroke="#a78bfa"/>
+      <circle cx="420" cy="238" r="12" stroke="#38bdf8"/>
+      <circle cx="330" cy="265" r="13" stroke="#a78bfa"/>
+      <circle cx="250" cy="307" r="11" stroke="#22d3ee"/>
+      <circle cx="164" cy="282" r="9" stroke="#38bdf8"/>
+    </g>
+
+    <g transform="translate(36,334)">
+      <rect x="0" y="0" width="148" height="62" rx="13" fill="url(#card)" stroke="#334155"/>
+      <text x="74" y="25" text-anchor="middle" fill="#e2e8f0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">CAR / MDF</text>
+      <text x="74" y="44" text-anchor="middle" fill="#64748b" font-family="ui-sans-serif, system-ui" font-size="11">assigned structure</text>
+
+      <path d="M158 31 H200" stroke="#38bdf8" stroke-width="2"/>
+      <path d="M193 24 L201 31 L193 38" fill="none" stroke="#38bdf8" stroke-width="2"/>
+
+      <rect x="210" y="0" width="148" height="62" rx="13" fill="url(#card)" stroke="#334155"/>
+      <text x="284" y="25" text-anchor="middle" fill="#e2e8f0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">AUDIT</text>
+      <text x="284" y="44" text-anchor="middle" fill="#64748b" font-family="ui-sans-serif, system-ui" font-size="11">fail closed</text>
+
+      <path d="M368 31 H410" stroke="#a78bfa" stroke-width="2"/>
+      <path d="M403 24 L411 31 L403 38" fill="none" stroke="#a78bfa" stroke-width="2"/>
+
+      <rect x="420" y="0" width="148" height="62" rx="13" fill="url(#card)" stroke="#334155"/>
+      <text x="494" y="25" text-anchor="middle" fill="#e2e8f0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700">CLASS-II</text>
+      <text x="494" y="44" text-anchor="middle" fill="#64748b" font-family="ui-sans-serif, system-ui" font-size="11">LAMMPS output</text>
+    </g>
+  </g>
+
+  <text x="1360" y="486" text-anchor="end" fill="#475569" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">parameter-aware · auditable · reproducible</text>
+</svg>
