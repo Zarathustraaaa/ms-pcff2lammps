@@ -1,59 +1,85 @@
+<div align="center">
+
 # ms-pcff2lammps
 
-`ms-pcff2lammps` is a conservative conversion and audit tool for translating **Materials Studio-assigned PCFF** molecular structures into LAMMPS Class-II bonded topology and coefficients.
+**Audited Materials Studio PCFF → LAMMPS Class-II conversion**
 
-It focuses on explicit parameter lookup, Class-II coefficient conversion, missing-parameter auditing, and fixed-coordinate parity checks.
+A conservative command-line tool for converting Materials Studio-assigned PCFF molecular structures into LAMMPS Class-II bonded topology and coefficients, with explicit parameter auditing and fixed-coordinate parity checks.
 
-> **Status:** `0.1.0b1` is a research beta. The most complete numerical validation currently available is a PAAm pentamer case. Treat other chemistries as new validation targets, not as automatically covered by that result.
+[![Release](https://img.shields.io/github/v/release/Zarathustraaaa/ms-pcff2lammps?include_prereleases&sort=semver)](https://github.com/Zarathustraaaa/ms-pcff2lammps/releases)
+[![Public CI](https://github.com/Zarathustraaaa/ms-pcff2lammps/actions/workflows/ci.yml/badge.svg)](https://github.com/Zarathustraaaa/ms-pcff2lammps/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.10%E2%80%933.13-3776AB)
+![License](https://img.shields.io/badge/License-BSD--3--Clause-3A7D44)
+![Status](https://img.shields.io/badge/status-research%20beta-6A5ACD)
 
-## Why this tool exists
+[Quick start](#quick-start) · [How it works](#how-it-works) · [Validation](#validation) · [Limitations](#scope-and-limitations) · [Documentation](#documentation) · [Releases](https://github.com/Zarathustraaaa/ms-pcff2lammps/releases)
 
-PCFF is a Class-II force field. A correct transfer is more involved than copying diagonal bond, angle, torsion, and inversion coefficients. The implementation must also account for force-field equivalence rules, explicit wildcard records, bond-order step-down rules, cross terms, topology ordering, and LAMMPS-specific Class-II conventions.
+</div>
 
-This tool follows a fail-closed workflow:
+---
+
+## At a glance
+
+| | |
+|---|---|
+| **Input** | Materials Studio `.car` + `.mdf` and a user-supplied PCFF `.off` database |
+| **Output** | Audited LAMMPS Class-II bonded topology and coefficients |
+| **Default behavior** | Fail closed on unresolved required terms |
+| **Parity support** | Fixed-coordinate bonded `run 0` checks against a user-supplied reference |
+| **Redistributed force-field data** | None |
+| **Current release** | `0.1.0b1` research beta |
+
+> [!IMPORTANT]
+> This project does not redistribute Materials Studio or PCFF parameter databases. Users provide legally obtained local parameter files at runtime.
+
+## Why this exists
+
+PCFF is a Class-II force field. A correct transfer requires more than copying diagonal bond, angle, torsion, and inversion coefficients. It also depends on equivalence rules, explicit wildcard records, bond-order step-down rules, cross terms, topology ordering, and LAMMPS-specific Class-II conventions.
+
+`ms-pcff2lammps` keeps that process explicit and auditable. It does **not** retype atoms, invent charges, silently fill missing coefficients, or treat a successful file conversion as proof that a new chemistry has been validated.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A["Assigned CAR / MDF"] --> C["Topology + atom types"]
+    B["Local PCFF OFF"] --> D["Parameter lookup"]
+    C --> E["Strict parameter audit"]
+    D --> E
+    E -->|"complete"| F["LAMMPS Class-II data"]
+    E -->|"required term missing"| X["stop"]
+    F --> G["optional fixed-coordinate run 0"]
+    G --> H["parity report"]
+```
+
+The lookup and conversion path is deliberately fail-closed:
 
 1. read the assigned CAR/MDF structure without retyping atoms or guessing bonds;
 2. parse the user-supplied OFF database;
-3. resolve each required interaction through the explicit OFF hierarchy;
+3. resolve each required interaction through the implemented OFF hierarchy;
 4. write a machine-readable audit trail;
 5. stop if a required interaction is unresolved;
-6. only then emit LAMMPS Class-II data;
-7. optionally run a fixed-coordinate bonded `run 0` parity check against a reference selected by the user.
+6. emit LAMMPS Class-II bonded data only after the audit passes;
+7. optionally run a fixed-coordinate bonded parity check.
 
-It does **not** assign PCFF atom types, create charges, redistribute commercial parameter files, or silently invent force-field coefficients.
-
-## Installation
+## Quick start
 
 Python 3.10 or newer is required.
 
 ```bash
+git clone https://github.com/Zarathustraaaa/ms-pcff2lammps.git
+cd ms-pcff2lammps
 python -m pip install .
+```
+
+Check the CLI:
+
+```bash
+ms-pcff2lammps --version
 ms-pcff2lammps --help
 ```
 
-For development:
-
-```bash
-python -m pip install -e '.[dev]'
-pytest -q tests
-python scripts/check_repository_hygiene.py
-```
-
-The runtime code uses only the Python standard library.
-
-## Inputs
-
-You provide locally:
-
-- a Materials Studio `.car` file;
-- the corresponding `.mdf` file containing the assigned atom types, charges, bond orders, and connectivity;
-- a legally obtained PCFF `.off` parameter file from your own installation.
-
-The repository does **not** redistribute the PCFF parameter database, native parameter-table exports, or project-specific validation structures. Automated tests use redistributable synthetic fixtures. See [docs/TESTING.md](docs/TESTING.md) and [docs/PARAMETER_DATA.md](docs/PARAMETER_DATA.md).
-
-## Audit first
-
-The default mode is strict:
+### 1. Audit first
 
 ```bash
 ms-pcff2lammps audit \
@@ -63,11 +89,9 @@ ms-pcff2lammps audit \
   --outdir audit
 ```
 
-The main output is `parameter_audit.csv`. Missing diagonal terms and unresolved Class-II cross terms remain errors. A source-side statement such as `Missing parameters = 0` does not by itself prove that a local lookup miss is a zero term; the miss may also expose an ordering, equivalence, or parser problem.
+The primary output is `parameter_audit.csv`. Missing diagonal terms and unresolved Class-II cross terms remain errors.
 
-The validation-only no-op policy used for the PAAm reference case is available only from `generate`, behind the named PAAm profile and the safeguards described below. It is not exposed as a generic audit override.
-
-## Generate Class-II bonded data
+### 2. Generate bonded Class-II data
 
 ```bash
 ms-pcff2lammps generate \
@@ -77,9 +101,9 @@ ms-pcff2lammps generate \
   --outdir converted
 ```
 
-The generated LAMMPS input is a **fixed-coordinate bonded audit input** using `pair_style zero`. It is not a production MD input and does not attempt to configure production nonbonded electrostatics or van der Waals settings.
+The generated LAMMPS input is a **fixed-coordinate bonded audit input** using `pair_style zero`. It is not a production MD template.
 
-If a LAMMPS executable is available:
+### 3. Optional LAMMPS parity run
 
 ```bash
 ms-pcff2lammps generate \
@@ -90,11 +114,11 @@ ms-pcff2lammps generate \
   --lammps /path/to/lmp
 ```
 
-With no reference selected, the tool runs LAMMPS and reports the bonded thermo components without declaring parity.
+Without a reference, the tool reports bonded thermo components but does not declare parity.
 
 ## Reference-based parity
 
-Reference energies are never embedded or selected implicitly. Provide them from a local JSON file:
+Reference energies are supplied locally and are never embedded or selected implicitly.
 
 ```json
 {
@@ -116,11 +140,42 @@ ms-pcff2lammps generate \
   --lammps /path/to/lmp
 ```
 
-Only like-for-like bonded groups should be used in such a reference. Materials Studio and LAMMPS do not necessarily expose identical component labels.
+Only like-for-like bonded groups should be compared. Materials Studio and LAMMPS do not necessarily expose identical component labels.
 
-## PAAm validation profile
+## Validation
 
-The release includes one named profile, `paam-pentamer-20260917`, for the PAAm pentamer workflow used to establish the current native Bend-Bend/AngleAngle mapping. Reproducing that path additionally requires a local native Bend-Bend export from Materials Studio; that export is not distributed here.
+The most complete validation in the current beta is a fixed-coordinate PAAm pentamer workflow.
+
+| Metric | Result |
+|---|---:|
+| Required missing parameters | **0** |
+| Unexpected Bend-Bend missing components | **0** |
+| AngleAngle topologies | **40** |
+| Native Bend-Bend exact matches | **99** |
+| Native symmetry-resolved components | **9** |
+| Validated Bend-Bend no-op components | **12** |
+| BASE improper + AngleAngle delta | **3.787 × 10⁻¹² kcal/mol** |
+| C1_C9_plus improper + AngleAngle delta | **3.786 × 10⁻¹² kcal/mol** |
+| Relative total-energy RMSE | **7.486 × 10⁻⁸ kcal/mol** |
+| Relative total-energy max residual | **1.113 × 10⁻⁷ kcal/mol** |
+
+The associated nonbonded parity run used:
+
+```text
+pair_style lj/class2/coul/cut 12.5
+special_bonds lj/coul 0.0 0.0 1.0
+```
+
+Nonbonded pair coefficients and the direct-cutoff validation were handled separately. `0.1.0b1` does not generate a production nonbonded input.
+
+See [docs/VALIDATION.md](docs/VALIDATION.md) and [docs/NONBONDED.md](docs/NONBONDED.md) for the full record.
+
+<details>
+<summary><strong>PAAm Bend-Bend validation profile</strong></summary>
+
+The release includes one named profile, `paam-pentamer-20260917`, for the PAAm pentamer workflow used to establish the current native Bend-Bend/AngleAngle mapping.
+
+Reproducing that path requires a local native Bend-Bend export from Materials Studio; the export is not distributed here.
 
 ```bash
 ms-pcff2lammps generate \
@@ -135,51 +190,59 @@ ms-pcff2lammps generate \
   --lammps /path/to/lmp
 ```
 
-The profile is deliberately named and gated. It should not be interpreted as a transferable claim for every PCFF atom type or chemistry.
+The profile is deliberately named and gated. It is not a transferable claim for every PCFF atom type or chemistry.
 
-## Validation record
+</details>
 
-For the final PAAm fixed-coordinate validation:
+## Scope and limitations
 
-| Metric | Result |
-|---|---:|
-| Required missing parameters | 0 |
-| Unexpected Bend-Bend missing components | 0 |
-| Native Bend-Bend exact matches | 99 |
-| Native symmetry-resolved components | 9 |
-| Validated Bend-Bend no-op components | 12 |
-| BASE improper + AngleAngle delta | 3.787 × 10⁻¹² kcal/mol |
-| C1_C9_plus improper + AngleAngle delta | 3.786 × 10⁻¹² kcal/mol |
-| Relative total-energy RMSE | 7.486 × 10⁻⁸ kcal/mol |
-| Relative total-energy max residual | 1.113 × 10⁻⁷ kcal/mol |
+This project is intentionally conservative.
 
-The associated nonbonded parity run used `pair_style lj/class2/coul/cut 12.5` and `special_bonds lj/coul 0.0 0.0 1.0`. Nonbonded pair coefficients and the direct-cutoff validation were handled separately; `0.1.0b1` does not generate a production nonbonded input. See [docs/VALIDATION.md](docs/VALIDATION.md) and [docs/NONBONDED.md](docs/NONBONDED.md).
-
-## Current limitations
-
-- native Bend-Bend support is validated only for the named PAAm profile;
-- the built-in atomic mass table currently covers H, C, N, and O;
-- production nonbonded setup is outside the scope of this beta;
-- some Class-II cross-term applicability logic was developed against the PAAm validation case and requires independent validation on new chemistry;
-- a successful parameter audit is not a substitute for energy/force parity on the target system;
-- a Forcite `BendBendEnergy` value must not be compared directly with LAMMPS `eimp` when the latter also contains ordinary inversion energy.
+- Native Bend-Bend support is validated only for the named PAAm profile.
+- The built-in atomic mass table currently covers H, C, N, and O.
+- Production nonbonded setup is outside the scope of this beta.
+- Some Class-II cross-term applicability logic was developed against the PAAm validation case and requires independent validation on new chemistry.
+- A successful parameter audit is not a substitute for energy/force parity on the target system.
+- A Forcite `BendBendEnergy` value must not be compared directly with LAMMPS `eimp` when the latter also contains ordinary inversion energy.
 
 See [docs/LIMITATIONS.md](docs/LIMITATIONS.md) before applying the converter to a new system.
 
+## Development
+
+```bash
+python -m pip install -e '.[dev]'
+python -m compileall -q src tests
+pytest -q tests
+python scripts/check_repository_hygiene.py
+```
+
+Public CI is self-contained. It does not require Materials Studio, a PCFF database, LAMMPS, native parameter exports, or project-specific validation structures.
+
 ## Documentation
 
-- [Usage and audit semantics](docs/USAGE.md)
-- [Algorithm and lookup order](docs/ALGORITHM.md)
-- [Validation record](docs/VALIDATION.md)
-- [Testing and validation](docs/TESTING.md)
-- [Nonbonded parity notes](docs/NONBONDED.md)
-- [Parameter data and licensing](docs/PARAMETER_DATA.md)
-- [Provenance](docs/PROVENANCE.md)
-- [Limitations](docs/LIMITATIONS.md)
-- [Scientific and legal disclaimer](DISCLAIMER.md)
+| Document | Purpose |
+|---|---|
+| [Usage](docs/USAGE.md) | Commands, audit semantics, and common workflows |
+| [Algorithm](docs/ALGORITHM.md) | Lookup order and Class-II conversion logic |
+| [Validation](docs/VALIDATION.md) | Numerical validation record |
+| [Testing](docs/TESTING.md) | Public CI and validation strategy |
+| [Nonbonded notes](docs/NONBONDED.md) | Nonbonded parity details |
+| [Parameter data](docs/PARAMETER_DATA.md) | Data and licensing boundary |
+| [Provenance](docs/PROVENANCE.md) | Project provenance and release preparation |
+| [Limitations](docs/LIMITATIONS.md) | Supported scope and known limitations |
+| [Release process](docs/RELEASING.md) | Release checklist and package verification |
+| [Disclaimer](DISCLAIMER.md) | Scientific and legal scope |
 
 ## License and independence
 
-The source code in this repository is released under the BSD 3-Clause License. That license applies only to this project’s code. It does not grant rights to Materials Studio, PCFF parameter databases, or any third-party software or data.
+The source code is released under the [BSD 3-Clause License](LICENSE). That license applies only to this project's code and does not grant rights to Materials Studio, PCFF parameter databases, or any third-party software or data.
 
 This is independent research software. It is not affiliated with, endorsed by, or sponsored by Dassault Systèmes BIOVIA or the LAMMPS project. Product and project names are used only to describe interoperability.
+
+---
+
+<div align="center">
+
+**[Release v0.1.0b1](https://github.com/Zarathustraaaa/ms-pcff2lammps/releases/tag/v0.1.0b1)** · **[Report an issue](https://github.com/Zarathustraaaa/ms-pcff2lammps/issues)**
+
+</div>
