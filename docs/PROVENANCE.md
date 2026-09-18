@@ -1,6 +1,6 @@
-# Provenance and release preparation
+# Provenance
 
-The public beta was prepared from the validated project script `ms_pcff_lammps.py` used in the 2026-09-17 PAAm parity work.
+The public beta is derived from the validated `ms_pcff_lammps.py` converter used in the 2026-09-17 PAAm parity work.
 
 Source snapshot SHA-256:
 
@@ -14,18 +14,16 @@ Corrected final parity report SHA-256:
 c545b23cebe76694638ecc145ca30c3932343a3bb6e51b02f63c2f07e66ab739  final_pcff_parity_report_corrected.txt
 ```
 
-The public package intentionally changes several interface defaults relative to that working script:
+The packaged interface differs from the original project script in several ways:
 
-- embedded PAAm reference energies were removed; parity references are supplied locally through `--reference-json`;
-- the broad Forcite-backed missing-cross-term-to-zero behavior was changed to fail closed unless `--allow-forcite-cross-zero` is supplied together with a zero native missing-parameter count;
-- native Bend-Bend conversion now requires the explicit `paam-pentamer-20260917` profile;
+- parity references are supplied through `--reference-json` rather than embedded;
+- missing Class-II cross terms fail closed unless the explicit validation-only override is used with a zero native missing-parameter count;
+- native Bend-Bend conversion requires the `paam-pentamer-20260917` profile;
 - generic output filenames replace PAAm-specific defaults;
-- a package/console entry point and repository tests were added.
+- a package/console entry point and automated tests are included.
 
-The validated coefficient transformations and the PAAm Bend-Bend mapping used by the named profile were not re-fit during repository preparation.
+The validated coefficient transformations and PAAm Bend-Bend mapping used by the named profile were preserved.
 
-Git tags and commit hashes are the canonical identifiers for public package revisions.
+Git tags and commit hashes are the canonical identifiers for package revisions.
 
-## Public CI versus source-side validation
-
-GitHub Actions is intentionally limited to redistributable software/synthetic fixtures. The PCFF database, native parameter exports, and private PAAm structure files used for the scientific parity exercise are external validation inputs, not repository dependencies. Their absence from public CI is by design; the numerical validation record is retained as aggregate metadata and is only reproduced locally with appropriately licensed inputs.
+Automated tests use redistributable fixtures. Full parity validation depends on local, appropriately licensed inputs and is represented in the repository by aggregate validation metadata.

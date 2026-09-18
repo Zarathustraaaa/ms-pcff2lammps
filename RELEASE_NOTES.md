@@ -10,11 +10,11 @@ First public beta of the audited Materials Studio PCFF to LAMMPS Class-II conver
 - LAMMPS Class-II bonded data generation for the implemented forms;
 - fixed-coordinate bonded `run 0` parity checks against a user-supplied local reference;
 - a named PAAm pentamer Bend-Bend/AngleAngle validation profile;
-- repository hygiene and public synthetic CI that do not require proprietary PCFF data.
+- self-contained synthetic tests and repository hygiene checks.
 
-## Validation represented in this beta
+## Validation
 
-The aggregate PAAm validation record reports:
+The PAAm validation record reports:
 
 - `REQUIRED_MISSING = 0`;
 - 40 AngleAngle topologies;
@@ -30,7 +30,7 @@ The aggregate PAAm validation record reports:
 
 This is a research beta, not a universal PCFF converter. The most complete validation in this release is the PAAm pentamer workflow. New chemistries should be treated as new validation targets.
 
-The release does not redistribute Materials Studio or PCFF parameter databases, native parameter-table exports, or private validation structures. Users must provide legally obtained local inputs.
+The release does not redistribute Materials Studio or PCFF parameter databases, native parameter-table exports, or project-specific validation structures. Users must provide legally obtained local inputs.
 
 Production nonbonded setup is outside the scope of this beta. The generated parity input is a fixed-coordinate bonded audit input, not a production MD template.
 

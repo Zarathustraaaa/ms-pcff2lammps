@@ -2,7 +2,7 @@
 
 `ms-pcff2lammps` is a conservative conversion and audit tool for translating **Materials Studio-assigned PCFF** molecular structures into LAMMPS Class-II bonded topology and coefficients.
 
-The project grew out of a fixed-geometry parity investigation in which a PCFF model assigned by Materials Studio was reproduced in LAMMPS term by term. The public release keeps the useful parts of that workflow—formal OFF lookup, Class-II coefficient conversion, missing-parameter auditing, and fixed-coordinate parity checks—while deliberately avoiding assumptions that were only validated for one system.
+It focuses on explicit parameter lookup, Class-II coefficient conversion, missing-parameter auditing, and fixed-coordinate parity checks.
 
 > **Status:** `0.1.0b1` is a research beta. The most complete numerical validation currently available is a PAAm pentamer case. Treat other chemistries as new validation targets, not as automatically covered by that result.
 
@@ -10,7 +10,7 @@ The project grew out of a fixed-geometry parity investigation in which a PCFF mo
 
 PCFF is a Class-II force field. A correct transfer is more involved than copying diagonal bond, angle, torsion, and inversion coefficients. The implementation must also account for force-field equivalence rules, explicit wildcard records, bond-order step-down rules, cross terms, topology ordering, and LAMMPS-specific Class-II conventions.
 
-This tool therefore follows a fail-closed workflow:
+This tool follows a fail-closed workflow:
 
 1. read the assigned CAR/MDF structure without retyping atoms or guessing bonds;
 2. parse the user-supplied OFF database;
@@ -49,7 +49,7 @@ You provide locally:
 - the corresponding `.mdf` file containing the assigned atom types, charges, bond orders, and connectivity;
 - a legally obtained PCFF `.off` parameter file from your own installation.
 
-The repository intentionally does **not** contain a PCFF parameter database, native parameter-table exports, or the private PAAm structure files used for the full source-side validation. Public CI is therefore self-contained and uses only redistributable synthetic/software fixtures. See [docs/TESTING.md](docs/TESTING.md) and [docs/PARAMETER_DATA.md](docs/PARAMETER_DATA.md).
+The repository does **not** redistribute the PCFF parameter database, native parameter-table exports, or project-specific validation structures. Automated tests use redistributable synthetic fixtures. See [docs/TESTING.md](docs/TESTING.md) and [docs/PARAMETER_DATA.md](docs/PARAMETER_DATA.md).
 
 ## Audit first
 
@@ -63,9 +63,9 @@ ms-pcff2lammps audit \
   --outdir audit
 ```
 
-The main output is `parameter_audit.csv`. The public audit command is fail-closed: missing diagonal terms and unresolved Class-II cross terms remain errors. A source-side statement such as `Missing parameters = 0` is useful provenance, but it does not by itself prove that a local lookup miss is a zero term; the miss may also expose an ordering, equivalence, or parser problem.
+The main output is `parameter_audit.csv`. Missing diagonal terms and unresolved Class-II cross terms remain errors. A source-side statement such as `Missing parameters = 0` does not by itself prove that a local lookup miss is a zero term; the miss may also expose an ordering, equivalence, or parser problem.
 
-The validation-only no-op policy used to reproduce the PAAm reference case is therefore available only from `generate`, behind the named PAAm profile and matching parity safeguards described below. It is not exposed as a generic audit override.
+The validation-only no-op policy used for the PAAm reference case is available only from `generate`, behind the named PAAm profile and the safeguards described below. It is not exposed as a generic audit override.
 
 ## Generate Class-II bonded data
 
@@ -120,18 +120,18 @@ Only like-for-like bonded groups should be used in such a reference. Materials S
 
 ## PAAm validation profile
 
-The release includes one named profile, `paam-pentamer-20260917`, for the PAAm pentamer workflow used to establish the current native Bend-Bend/AngleAngle mapping. Reproducing that path additionally requires a **local** native Bend-Bend export from Materials Studio; that export is not distributed here.
+The release includes one named profile, `paam-pentamer-20260917`, for the PAAm pentamer workflow used to establish the current native Bend-Bend/AngleAngle mapping. Reproducing that path additionally requires a local native Bend-Bend export from Materials Studio; that export is not distributed here.
 
 ```bash
 ms-pcff2lammps generate \
   --car PAAm.car \
   --mdf PAAm.mdf \
   --off /path/to/pcff.off \
-  --native-bendbend /local/private/pcff_native_bendbend.csv \
+  --native-bendbend /path/to/pcff_native_bendbend.csv \
   --bendbend-profile paam-pentamer-20260917 \
   --forcite-missing-parameters 0 \
   --allow-forcite-cross-zero \
-  --reference-json /local/private/paam_bonded_reference.json \
+  --reference-json /path/to/paam_bonded_reference.json \
   --lammps /path/to/lmp
 ```
 
@@ -153,11 +153,9 @@ For the final PAAm fixed-coordinate validation:
 | Relative total-energy RMSE | 7.486 × 10⁻⁸ kcal/mol |
 | Relative total-energy max residual | 1.113 × 10⁻⁷ kcal/mol |
 
-The associated nonbonded parity run used `pair_style lj/class2/coul/cut 12.5` and `special_bonds lj/coul 0.0 0.0 1.0`. Nonbonded pair coefficients and the direct-cutoff validation were handled separately; `0.1.0b1` intentionally does not generate a production nonbonded input. See [docs/VALIDATION.md](docs/VALIDATION.md) and [docs/NONBONDED.md](docs/NONBONDED.md).
+The associated nonbonded parity run used `pair_style lj/class2/coul/cut 12.5` and `special_bonds lj/coul 0.0 0.0 1.0`. Nonbonded pair coefficients and the direct-cutoff validation were handled separately; `0.1.0b1` does not generate a production nonbonded input. See [docs/VALIDATION.md](docs/VALIDATION.md) and [docs/NONBONDED.md](docs/NONBONDED.md).
 
 ## Current limitations
-
-The limitations are part of the release contract, not footnotes:
 
 - native Bend-Bend support is validated only for the named PAAm profile;
 - the built-in atomic mass table currently covers H, C, N, and O;
@@ -173,12 +171,11 @@ See [docs/LIMITATIONS.md](docs/LIMITATIONS.md) before applying the converter to 
 - [Usage and audit semantics](docs/USAGE.md)
 - [Algorithm and lookup order](docs/ALGORITHM.md)
 - [Validation record](docs/VALIDATION.md)
-- [Testing model: public CI vs private integration validation](docs/TESTING.md)
+- [Testing and validation](docs/TESTING.md)
 - [Nonbonded parity notes](docs/NONBONDED.md)
 - [Parameter data and licensing](docs/PARAMETER_DATA.md)
 - [Provenance](docs/PROVENANCE.md)
 - [Limitations](docs/LIMITATIONS.md)
-- [Release process](docs/RELEASING.md)
 - [Scientific and legal disclaimer](DISCLAIMER.md)
 
 ## License and independence
