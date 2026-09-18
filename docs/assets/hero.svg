@@ -1,19 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="520" viewBox="0 0 1440 520">
 <title>ms-pcff2lammps molecular cartoon</title>
 <rect width="1440" height="520" fill="white"/>
-<g stroke="#111" stroke-width="3" fill="#e8b6c8">
+<g stroke="#111" stroke-width="3" fill="#f3b6c6">
   <g transform="translate(100,120)">
-    <circle cx="20" cy="120" r="18"/><circle cx="55" cy="125" r="20"/><circle cx="90" cy="105" r="18"/><circle cx="130" cy="80" r="21"/><circle cx="175" cy="55" r="19"/><circle cx="220" cy="75" r="20"/><circle cx="265" cy="115" r="18"/><circle cx="310" cy="100" r="21"/><circle cx="360" cy="70" r="18"/>
-    <circle cx="145" cy="140" r="17" fill="#cfcfcf"/><circle cx="280" cy="150" r="19" fill="#cfcfcf"/>
+    <circle cx="20" cy="120" r="18"/><circle cx="55" cy="125" r="20"/><circle cx="92" cy="108" r="18"/><circle cx="135" cy="78" r="21"/><circle cx="180" cy="62" r="19"/><circle cx="225" cy="82" r="20"/><circle cx="270" cy="118" r="18"/><circle cx="318" cy="92" r="21"/><circle cx="365" cy="72" r="18"/>
+    <circle cx="150" cy="145" r="17" fill="#d5d5d5"/><circle cx="290" cy="148" r="19" fill="#d5d5d5"/>
   </g>
   <g transform="translate(570,145)">
-    <circle cx="30" cy="80" r="20"/><circle cx="70" cy="55" r="22"/><circle cx="110" cy="75" r="20"/><circle cx="145" cy="110" r="22"/><circle cx="95" cy="135" r="18"/><circle cx="45" cy="130" r="19"/><circle cx="160" cy="65" r="17" fill="#cfcfcf"/>
+    <circle cx="30" cy="80" r="20"/><circle cx="75" cy="52" r="22"/><circle cx="115" cy="78" r="20"/><circle cx="152" cy="112" r="22"/><circle cx="105" cy="140" r="18"/><circle cx="48" cy="130" r="19"/><circle cx="165" cy="68" r="17" fill="#d5d5d5"/>
   </g>
   <g transform="translate(1010,115)">
-    <circle cx="40" cy="50" r="20"/><circle cx="80" cy="40" r="22"/><circle cx="120" cy="55" r="20"/><circle cx="160" cy="45" r="22"/><circle cx="55" cy="90" r="21"/><circle cx="100" cy="95" r="23"/><circle cx="145" cy="100" r="20"/><circle cx="190" cy="80" r="21"/><circle cx="80" cy="145" r="22"/><circle cx="130" cy="150" r="20" fill="#cfcfcf"/>
+    <circle cx="40" cy="50" r="20"/><circle cx="82" cy="38" r="22"/><circle cx="125" cy="58" r="20"/><circle cx="165" cy="48" r="22"/><circle cx="58" cy="92" r="21"/><circle cx="105" cy="98" r="23"/><circle cx="150" cy="102" r="20"/><circle cx="195" cy="82" r="21"/><circle cx="85" cy="150" r="22"/><circle cx="135" cy="152" r="20" fill="#d5d5d5"/>
   </g>
 </g>
 <g fill="none" stroke="#111" stroke-width="4"><path d="M470 250 H530"/><path d="M520 240 L535 250 L520 260"/><path d="M850 250 H970"/><path d="M960 240 L975 250 L960 260"/></g>
-<text x="720" y="410" text-anchor="middle" font-family="Times New Roman,Times,serif" font-size="64" font-weight="bold" fill="#111">ms-pcff2lammps</text>
-<text x="720" y="460" text-anchor="middle" font-family="Times New Roman,Times,serif" font-size="26" fill="#222">audited PCFF → LAMMPS Class-II conversion</text>
 </svg>
