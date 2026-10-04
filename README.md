@@ -141,6 +141,48 @@ pytest -q
 
 ---
 
+## Beta release requirements
+
+Freeze the candidate commit, including version and release metadata.
+The exact commit must first pass Public CI, then pass private PAAm
+fixed-coordinate validation using the installed candidate package.
+
+Private validation must confirm `REQUIRED_MISSING = 0`, no unexpected
+Bend-Bend misses, the expected fixture topology/mapping counts, and
+parity of definitionally equivalent energy groups. Use the matching local
+CAR/MDF and PCFF OFF inputs, the native Bend-Bend export required by the
+profile, and the private fixed-geometry reference. Record the candidate
+SHA, package version, public CI run, Materials Studio/PCFF and LAMMPS
+versions, and redistributable aggregate results. Investigate material
+deviations without weakening acceptance criteria.
+
+Keep private structures, force-field databases, complete native parameter
+exports, reference energies, personal paths, and generated files reproducing
+restricted parameter tables outside the repository and release assets.
+The historical aggregate record in `validation/paam-pentamer-20260917.json`
+does not establish private validation of subsequent commits.
+
+Before tagging, verify repository hygiene and version consistency in
+`pyproject.toml`, `CITATION.cff`, and `src/ms_pcff2lammps/_version.py`.
+Changes to the candidate SHA require repeating both gates. Record changes
+since the last release under `Unreleased` in `CHANGELOG.md`; when preparing
+a release, move those changes to the new version and date before freezing
+the candidate.
+
+Create a new annotated beta tag only after both gates pass. Do not move
+or overwrite an existing release tag. Create the GitHub pre-release
+manually only after the tag's Release gate succeeds. Include the exact
+tag/commit, validated scope, known limitations, and aggregate validation
+results in the release notes.
+
+Public CI and Release gate do not publish to GitHub Releases or package
+indexes. Release gate only builds, checks, and uploads CI artifacts;
+it does not enforce prior Public CI approval or perform private validation.
+Uploaded artifacts do not establish private validation approval.
+PyPI publication is outside these workflows.
+
+---
+
 ## License
 
 BSD 3-Clause License.
