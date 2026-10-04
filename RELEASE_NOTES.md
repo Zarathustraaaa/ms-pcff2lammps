@@ -26,6 +26,14 @@ The PAAm validation record reports:
 - relative total-energy RMSE `7.49e-8 kcal/mol`;
 - maximum relative total-energy residual `1.11e-7 kcal/mol`.
 
+These aggregate results describe the recorded PAAm validation fixture;
+they do not establish private validation of subsequent main commits.
+Each new beta candidate must pass Public CI and then private PAAm
+validation on the same commit, as described in
+[Beta release requirements](README.md#beta-release-requirements).
+Release records must identify the exact tag/commit and validation
+software versions without distributing private inputs.
+
 ## Scope
 
 This is a research beta, not a universal PCFF converter. The most complete validation in this release is the PAAm pentamer workflow. New chemistries should be treated as new validation targets.

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Removed the one-shot automatic v0.1.0b1 publisher.
+- Streamlined documentation, including removal of docs/RELEASING.md.
+- Updated release notes, README presentation, and validation figures.
+- Restored beta release requirements in README, including same-commit public CI and private validation gates.
+- Clarified historical validation provenance and the non-publishing Release gate boundary.
+
 ## 0.1.0b1 — 2026-09-18
 
 Initial public beta.

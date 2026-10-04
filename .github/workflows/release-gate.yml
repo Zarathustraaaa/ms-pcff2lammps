@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+# Non-publishing verification only: this workflow builds, checks, and
+# uploads distributions. It does not perform private PAAm validation
+# or enforce prior Public CI approval for the same commit.
+# Maintainers must satisfy README beta release requirements before tagging.
 jobs:
   verify:
     name: Verify release candidate
